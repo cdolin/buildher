@@ -8,35 +8,41 @@ geoID = {}
 for feature in data['features']:
     idnum = feature['properties']['geoid'].split('US')
     if len(idnum[1]) > 11:
-        geoID.append(idnum[1][0:11])
+        geoID[idnum[1][0:11]] = feature['geometry']
     else:
-        geoID.append(idnum[1])
+        geoID[idnum[1]] = feature['geometry']
 
-fips = []
+
+fips = {}
 csvdata = open('obesitychicago.csv','r').read().split("\n")
-for data in csvdata[0:len(csvdata)-1]:
+csvdata = csvdata[0:len(csvdata)-1]
+for data in csvdata:
     row = data.split(',')
-    fips.append(row[9])
+    num = row[9]
+    if num in geoID:
+        fips[num] = row[5]
 
-fips = fips[1:len(fips)]
-notfound=0
-
-for num in fips:
-    if not num in geoID:
-        notfound = num
-
-fips.remove(notfound)
-
-for num in fips:
-    if not num in geoID:
-        print(num)
-
-
+def geojson_features(fips, geoID):
+    features = []
+    new_entry = {}
+    for key in fips:
+        new_entry["type"] = "Feature"
+        properties = {}
+        properties["geoid"] = key
+        properties["obesity percentage"] = fips[key]
+        properties["geometry"] = geoID[key]
+        new_entry["properties"] = properties
+        features.append(new_entry)
+    return features
 
 
+def obj_geojson(geo_obj):
+    geojson = {"type":"FeatureCollection",
+                "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" }}}
+    geojson["features"] = geo_obj
+    return geojson
 
-"""for i in range(0, len(geoID)):
-    if geoID[i] in fips:
-        found_indexes.append(i)
-    else:
-        print("")"""
+geojson_obj = obj_geojson(geojson_features(fips, geoID))
+
+with open('obesity.geojson', 'w') as f:
+    json.dump(geojson_obj, f)
