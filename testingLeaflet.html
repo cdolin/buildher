@@ -108,10 +108,14 @@
 	function heatMapObesity(value){
 		value = (value-15)/36
 		var h = (1-value) * 240
-		return "hsl(" + h + ", 100%, 50%)";
+		return "hsl(" + h + ", 100%, 40%)";
 	}
 
-
+	function heatMapObesityOuter(value){
+		value = (value-15)/36
+		var h = (1-value) * 240
+		return "hsl(" + h + ", 100%, 10%)";
+	}
 
 
 
@@ -151,7 +155,8 @@
 
 	var obesityShapes = new L.geoJson(null, {
 		style: function(feature){
-			return {weight: 1, opacity: 1, color: heatMapObesity(parseInt(feature.properties["obesity percentage"]))}
+			var val = parseInt(feature.properties["obesity percentage"])
+			return {weight: 0, opacity: 1, fillOpacity: 0.8, color: heatMapObesityOuter(val), fillColor: heatMapObesity(val)}
 		}
 	})
 
