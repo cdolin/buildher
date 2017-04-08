@@ -77,7 +77,6 @@
 
 	$.ajax({
 		dataType: "json",
-		async: false,
 		url: "income_filtered.geojson",
 		success: function(data) {
     		$(data.features).each(function(key, data) {
@@ -102,6 +101,25 @@
 		}
 	})
 
+	var obesityShapes = new L.geoJson(null, {
+		style: function(feature){
+			return {weight: 10, opacity: 1, color: "#000000"}
+		}
+	})
+
+	$.ajax({
+		dataType: "json",
+		url: "obesity.geojson",
+		success: function(data) {
+    		$(data.features).each(function(key, data) {
+        		obesityShapes.addData(data);
+   			});
+		}
+	})
+
+
+
+	obesityShapes.addTo(bikeroutemap)
 	bike_routes.addTo(bikeroutemap)
 
 	$('#routeCheck').mousedown(function() {
