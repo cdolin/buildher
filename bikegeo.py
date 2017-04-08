@@ -11,8 +11,6 @@ for row in csvdata:
 
 
 racks = racks[0:len(racks)-1]
-for row in racks:
-    print(row)
 
 def geojson_features(racks):
     features = []
@@ -23,18 +21,19 @@ def geojson_features(racks):
         properties["rackID"] = rack[0]
         properties["address"] = rack[1]
         properties["neighborhood name"] = rack[4]
-        properties["racks"] = rack[5]
+        properties["number of racks"] = rack[5]
         new_entry["properties"] = properties
         geometry = {}
         geometry["type"] = "Point"
         geometry["coordinates"] = [float(rack[6]), float(rack[7])]
         new_entry["geometry"] = geometry
         features.append(new_entry)
+        new_entry = {}
     return features
 
 
-
 geofeatures = geojson_features(racks)
+print(len(geofeatures))
 
 def geojson_obj(features):
     geojson = {"type": "FeatureCollection"}
