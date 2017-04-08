@@ -42,13 +42,50 @@
 
 <div class="optionsArea">
 	<div class = "options">Bike Routes:</div><input type="checkbox" id="routeCheck" checked>
+	<div class = "options">Bike Racks:</div><input type="checkbox" id="rackCheck">
 	<div class = "options">Income Map:</div><input type="checkbox" id="incomeCheck">
+	<canvas id="myCanvas" width="160" height="20" style="border:1px solid #d3d3d3;"></canvas>
+	<div class = "options">Obesity Map:</div><input type="checkbox" id="obesityCheck">
+	<canvas id="myCanvas2" width="160" height="20" style="border:1px solid #d3d3d3;"></canvas>
+
 </div>
 <div id="mapid" class="maps" style="width: 630px; height: 630px;"></div>
 
 
 
 <script>
+
+
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+
+	var grd = ctx.createLinearGradient(0, 0, 170, 0);
+	grd.addColorStop(0, "red");
+	grd.addColorStop(0.1, "tomato");
+	grd.addColorStop(0.2, "orange")
+	grd.addColorStop(0.4, "yellow")
+	grd.addColorStop(0.5, "lime")
+	grd.addColorStop(0.75, "lightskyblue")
+	grd.addColorStop(1, "skyblue")
+
+	ctx.fillStyle = grd;
+	ctx.fillRect(0, 0, 160, 20);
+
+	var c1 = document.getElementById("myCanvas2");
+	var ctx1 = c1.getContext("2d");
+
+	var grd1 = ctx1.createLinearGradient(0, 0, 170, 0);
+	grd1.addColorStop(0, "blue");
+	grd1.addColorStop(0.15, "turquoise")
+	grd1.addColorStop(0.3, "lime")
+	grd1.addColorStop(0.5, "yellow")
+	grd1.addColorStop(0.7, "orange")
+	grd1.addColorStop(0.85, "tomato")
+	grd1.addColorStop(1, "red")
+
+	ctx1.fillStyle = grd1;
+	ctx1.fillRect(0, 0, 160, 20);
+
 
 	var bikeroutemap = L.map('mapid').setView([41.85, -87.63], 11);
 
@@ -68,12 +105,23 @@
   		return "hsl(" + h + ", 100%, 50%)";
 	}
 
+	function heatMapObesity(value){
+		value = (value-15)/36
+		var h = (1-value) * 240
+		return "hsl(" + h + ", 100%, 50%)";
+	}
+
+
+
+
+
+
+
 	var income = new L.geoJson(null, {
 		style: function(feature){
-			return {weight: 0.5, opacity : 0.5, color: heatMapColorforValue(feature.properties.B19013001)}
+			return {weight: 0, opacity : 0.5, color: heatMapColorforValue(feature.properties.B19013001)}
 		}
 	})
-
 
 	$.ajax({
 		dataType: "json",
@@ -103,7 +151,7 @@
 
 	var obesityShapes = new L.geoJson(null, {
 		style: function(feature){
-			return {weight: 10, opacity: 1, color: "#000000"}
+			return {weight: 1, opacity: 1, color: heatMapObesity(parseInt(feature.properties["obesity percentage"]))}
 		}
 	})
 
@@ -117,9 +165,25 @@
 		}
 	})
 
+	var bike_racks = L.layerGroup(null)
 
+	$.ajax({
+		dataType: "json",
+		url: "bikeracks.geojson",
+		success: function(data) {
+    		$(data.features).each(function(key,data) {
+        		var circle = L.circle([data.geometry.coordinates[0], data.geometry.coordinates[1]], {
+        			stroke: false,
+    				color: 'black',
+    				fillColor: 'black',
+    				fillOpacity: 0.5,
+    				radius: 50
+				})
+				bike_racks.addLayer(circle);
+   			});
+		}
+	})
 
-	obesityShapes.addTo(bikeroutemap)
 	bike_routes.addTo(bikeroutemap)
 
 	$('#routeCheck').mousedown(function() {
@@ -131,6 +195,15 @@
     	}
 	});
 
+	$('#rackCheck').mousedown(function() {
+    	if (!$(this).is(':checked')) {
+        	bike_racks.addTo(bikeroutemap)
+    	}
+    	if ($(this).is(':checked')) {
+    		bikeroutemap.removeLayer(bike_racks)
+    	}
+	});
+
 	$('#incomeCheck').mousedown(function() {
     	if (!$(this).is(':checked')) {
         	income.addTo(bikeroutemap)
@@ -138,6 +211,16 @@
     	}
     	if ($(this).is(':checked')) {
     		bikeroutemap.removeLayer(income)
+    	}
+	});
+
+	$('#obesityCheck').mousedown(function() {
+    	if (!$(this).is(':checked')) {
+        	obesityShapes.addTo(bikeroutemap)
+        	obesityShapes.bringToBack()
+    	}
+    	if ($(this).is(':checked')) {
+    		bikeroutemap.removeLayer(obesityShapes)
     	}
 	});
 
