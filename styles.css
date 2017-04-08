@@ -7,10 +7,15 @@ h1 {
     font-size: 300%;
 }
 p {
-    color: red;
+    color: midnightblue;
+    font-family: tahoma;
 }
 div.maps {
     max-width: 80%;
     margin: auto;
     border: 3px solid midnightblue;
+}
+
+L.geoJSON {
+	color: red;
 }
