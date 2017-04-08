@@ -30,8 +30,8 @@ def geojson_features(fips, geoID):
         properties = {}
         properties["geoid"] = key
         properties["obesity percentage"] = fips[key]
-        properties["geometry"] = geoID[key]
         new_entry["properties"] = properties
+        new_entry["geometry"] = geoID[key]
         features.append(new_entry)
     return features
 
