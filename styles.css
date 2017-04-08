@@ -9,6 +9,7 @@ h1 {
 p {
     color: midnightblue;
     font-family: tahoma;
+    width: 100%;
 }
 div.maps {
     max-width: 80%;
@@ -16,6 +17,3 @@ div.maps {
     border: 3px solid midnightblue;
 }
 
-L.geoJSON {
-	color: red;
-}

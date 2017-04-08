@@ -26,22 +26,68 @@
    <h1 align="center">Biking in Chicago</h1>
 </header>
 
-<div id="mapid1" class="maps" style="width: 630px; height: 630px;"></div>
+<div id="paragraph">
+	<p align = "center">
+		Biking is a great way to increase strength, endurance, and coordination. It can help someone lose weight and increase cardiovascular fitness.
+	</p>
+	<p align = "center">
+		It is also a pleasant and inexpensive way to commute in the warmer months and a fun way to explore one's neighborhood.
+	</p>
+	<p align = "center">
+		But bikers need access to safe bike routes and convenient bike racks.
+		So is biking really an available option for all Chicagoans?
+	</p>
+</div>
+
+<div id="mapid" class="maps" style="width: 630px; height: 630px;"></div>
 
 
 <script>
 
-	var bikeroutemap = L.map('mapid1').setView([41.85, -87.63], 11);
+	var bikeroutemap = L.map('mapid').setView([41.85, -87.63], 11);
 
-	L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2RvbGluIiwiYSI6ImNqMThvdHNhaTA3OWszMnFxOGRjcWZxeXUifQ.Rg_AcpJ7QKxnCwSpYy7spQ', {
+	var tl = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2RvbGluIiwiYSI6ImNqMThvdHNhaTA3OWszMnFxOGRjcWZxeXUifQ.Rg_AcpJ7QKxnCwSpYy7spQ', {
 		maxZoom: 18,
+		minZoom: 9,
 		attribution: '',
 		id: 'mapbox.streets'
-	}).addTo(bikeroutemap);
+	})
+
+	tl.addTo(bikeroutemap);
 
 
-	var bike_routes = new L.geoJson();
-		bike_routes.addTo(bikeroutemap);
+	function heatMapColorforValue(value){
+		if (value==0){
+			//return "hsl(" + 0 + ", 10%, 100%)"
+		}
+		value = value/190000
+  		var h = (1.0 - value) * 240
+  		return "hsl(" + h + ", 100%, 50%)";
+	}
+
+	var income = new L.geoJson(null, {
+		style: function(feature){
+			return {weight: 0.5, opacity : 0.5, color: heatMapColorforValue(feature.properties.B19013001)}
+		}
+	})
+
+
+	$.ajax({
+		dataType: "json",
+		async: false,
+		url: "income_filtered.geojson",
+		success: function(data) {
+    		$(data.features).each(function(key, data) {
+        		income.addData(data);
+   			});
+		}
+	})
+
+	var bike_routes = new L.geoJson(null, {
+		style: function(feature){
+			return {weight: 1, opacity: 1, color: "#000000"}
+		}
+	})
 
 	$.ajax({
 		dataType: "json",
@@ -53,30 +99,8 @@
 		}
 	})
 
-	function heatMapColorforValue(value){
-		value = value/200000
-  		var h = (1.0 - value) * 240
-  		return "hsl(" + h + ", 100%, 50%)";
-	}
-
-	var income = new L.geoJson(null, {
-		style: function(feature){
-			return {weight: 0.5, opacity : 0.5, color: heatMapColorforValue(feature.properties.B19013001)}
-		}
-
-	}).addTo(bikeroutemap);
-
-
-	$.ajax({
-		dataType: "json",
-		url: "income.geojson",
-		success: function(data) {
-    		$(data.features).each(function(key, data) {
-        		income.addData(data);
-   			});
-		}
-	})
-
+	income.addTo(bikeroutemap)
+	bike_routes.addTo(bikeroutemap)
 
 
 </script>
