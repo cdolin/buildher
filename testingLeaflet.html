@@ -57,10 +57,7 @@
 
 
 	function heatMapColorforValue(value){
-		if (value==0){
-			//return "hsl(" + 0 + ", 10%, 100%)"
-		}
-		value = value/190000
+		value = (value-5000)/190000
   		var h = (1.0 - value) * 240
   		return "hsl(" + h + ", 100%, 50%)";
 	}
