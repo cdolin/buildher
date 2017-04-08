@@ -6,14 +6,25 @@ h1 {
     font-family: tahoma;
     font-size: 300%;
 }
-p {
+p.info {
     color: midnightblue;
     font-family: tahoma;
-    width: 100%;
+}
+div.options {
+    color: midnightblue;
+    font-family: tahoma;
 }
 div.maps {
-    max-width: 80%;
-    margin: auto;
+    max-width: 74%;
+    float: center;
     border: 3px solid midnightblue;
+}
+div.optionsArea {
+    float: left;
+    width: 25%
+}
+div.mainarea {
+    max-width: 100%;
+
 }
 

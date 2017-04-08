@@ -27,19 +27,25 @@
 </header>
 
 <div id="paragraph">
-	<p align = "center">
+	<p align = "center" class="info">
 		Biking is a great way to increase strength, endurance, and coordination. It can help someone lose weight and increase cardiovascular fitness.
 	</p>
-	<p align = "center">
+	<p align = "center" class="info">
 		It is also a pleasant and inexpensive way to commute in the warmer months and a fun way to explore one's neighborhood.
 	</p>
-	<p align = "center">
+	<p align = "center" class="info">
 		But bikers need access to safe bike routes and convenient bike racks.
-		So is biking really an available option for all Chicagoans?
+		So is biking really an available option for everyone in Chicago?
 	</p>
 </div>
 
+
+<div class="optionsArea">
+	<div class = "options">Bike Routes:</div><input type="checkbox" id="routeCheck" checked>
+	<div class = "options">Income Map:</div><input type="checkbox" id="incomeCheck">
+</div>
 <div id="mapid" class="maps" style="width: 630px; height: 630px;"></div>
+
 
 
 <script>
@@ -58,7 +64,7 @@
 
 	function heatMapColorforValue(value){
 		value = (value-5000)/190000
-  		var h = (1.0 - value) * 240
+  		var h = (value) * 240
   		return "hsl(" + h + ", 100%, 50%)";
 	}
 
@@ -96,9 +102,32 @@
 		}
 	})
 
-	income.addTo(bikeroutemap)
 	bike_routes.addTo(bikeroutemap)
 
+	$('#routeCheck').mousedown(function() {
+    	if (!$(this).is(':checked')) {
+        	bike_routes.addTo(bikeroutemap)
+    	}
+    	if ($(this).is(':checked')) {
+    		bikeroutemap.removeLayer(bike_routes)
+    	}
+	});
+
+	$('#incomeCheck').mousedown(function() {
+    	if (!$(this).is(':checked')) {
+        	income.addTo(bikeroutemap)
+        	income.bringToBack()
+    	}
+    	if ($(this).is(':checked')) {
+    		bikeroutemap.removeLayer(income)
+    	}
+	});
+
+
+/*
+	income.addTo(bikeroutemap)
+	bike_routes.addTo(bikeroutemap)
+*/
 
 </script>
 
