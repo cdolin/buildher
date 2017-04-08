@@ -12,30 +12,59 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 	<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+	 <link rel="stylesheet" href="styles.css">
+
+
 
 	
 </head>
 <body>
 
+<header>
+   <h1 align="center">Biking in Chicago</h1>
+</header>
+
+<div id="mapid1" class="maps" style="width: 630px; height: 630px;"></div>
 
 
-<div id="mapid" style="width: 620px; height: 620px;"></div>
 <script>
 
-	var mymap = L.map('mapid').setView([41.87, -87.63], 12);
+	var bikeroutemap = L.map('mapid1').setView([41.85, -87.63], 11);
 
 	L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2RvbGluIiwiYSI6ImNqMThvdHNhaTA3OWszMnFxOGRjcWZxeXUifQ.Rg_AcpJ7QKxnCwSpYy7spQ', {
 		maxZoom: 18,
 		attribution: '',
 		id: 'mapbox.streets'
-	}).addTo(mymap);
+	}).addTo(bikeroutemap);
 
-	var circle = L.circle([41.87, -87.63], {
-    	color: 'red',
-    	fillColor: '#f03',
-    	fillOpacity: 0.5,
-    	radius: 500
-	}).addTo(mymap);
+
+	var bike_routes = new L.geoJson();
+		bike_routes.addTo(bikeroutemap);
+
+	$.ajax({
+		dataType: "json",
+		url: "bikeroutes.geojson",
+		success: function(data) {
+    		$(data.features).each(function(key, data) {
+        		bike_routes.addData(data);
+   			});
+		}
+	})
+
+	var income = new L.geoJson();
+		income.addTo(bikeroutemap);
+
+	$.ajax({
+		dataType: "json",
+		url: "income.geojson",
+		success: function(data) {
+    		$(data.features).each(function(key, data) {
+        		income.addData(data);
+   			});
+		}
+	})
 
 
 
