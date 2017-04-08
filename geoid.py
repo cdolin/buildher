@@ -22,6 +22,7 @@ for data in csvdata:
     if num in geoID:
         fips[num] = row[5]
 
+
 def geojson_features(fips, geoID):
     features = []
     new_entry = {}
@@ -33,6 +34,7 @@ def geojson_features(fips, geoID):
         new_entry["properties"] = properties
         new_entry["geometry"] = geoID[key]
         features.append(new_entry)
+        new_entry={}
     return features
 
 
